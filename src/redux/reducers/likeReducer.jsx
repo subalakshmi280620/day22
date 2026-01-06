@@ -1,6 +1,6 @@
 const initialState = { likes: 0 };
 
-const likeReducer = (state = initialState, action) => {
+export default function likeReducer(state = initialState, action) {
   switch (action.type) {
     case "LIKE":
       return { likes: state.likes + 1 };
@@ -9,6 +9,5 @@ const likeReducer = (state = initialState, action) => {
     default:
       return state;
   }
-};
+}
 
-export default likeReducer;

@@ -1,22 +1,37 @@
 import { useDispatch, useSelector } from "react-redux";
-import { increment, decrement, reset } from "./redux/actions/counterActions";
-import { addUser, removeUser } from "./redux/actions/userActions";
-import { addToCart, removeFromCart } from "./redux/actions/cartActions";
-import { addNote, deleteNote } from "./redux/actions/noteActions";
+import {
+  increment,
+  decrement,
+  reset,
+} from "./redux/actions/counterActions";
+import { addUser } from "./redux/actions/userActions";
+import { addToCart } from "./redux/actions/cartActions";
+import { addNote } from "./redux/actions/noteActions";
 import { like, dislike } from "./redux/actions/likeActions";
+import axios from "axios";
+import { useState } from "react";
 
-const App = () => {
-  const count = useSelector(state => state.counter.count);
-  const users = useSelector(state => state.users.users);
-  const cart = useSelector(state => state.cart.cart);
-  const notes = useSelector(state => state.notes.notes);
-  const likes = useSelector(state => state.likes.likes);
-
+function App() {
   const dispatch = useDispatch();
+  const count = useSelector((state) => state.counter.count);
+  const users = useSelector((state) => state.users.users);
+  const cart = useSelector((state) => state.cart);
+  const notes = useSelector((state) => state.notes);
+  const likes = useSelector((state) => state.likes.likes);
+
+  const [city, setCity] = useState("");
+  const [weather, setWeather] = useState(null);
+
+  const getWeather = async () => {
+    const res = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=YOUR_API_KEY&units=metric`
+    );
+    setWeather(res.data);
+  };
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Redux Actions & Reducers – All Tasks</h1>
+      <h1>Day 22 Redux Tasks & Mini Projects</h1>
 
       {/* Counter */}
       <h2>Counter</h2>
@@ -25,55 +40,58 @@ const App = () => {
       <button onClick={() => dispatch(decrement())}>-</button>
       <button onClick={() => dispatch(reset())}>Reset</button>
 
-      {/* User Registration */}
+      {/* User */}
       <h2>User Registration</h2>
-      <button onClick={() =>
-        dispatch(addUser({ id: Date.now(), name: "User" }))
-      }>
+      <button
+        onClick={() =>
+          dispatch(addUser({ id: Date.now(), name: "User" }))
+        }
+      >
         Add User
       </button>
-      {users.map(u => (
-        <div key={u.id}>
-          {u.name}
-          <button onClick={() => dispatch(removeUser(u.id))}>X</button>
-        </div>
+      {users.map((u) => (
+        <p key={u.id}>{u.name}</p>
       ))}
 
-      {/* Shopping Cart */}
-      <h2>Shopping Cart</h2>
-      <button onClick={() =>
-        dispatch(addToCart({ id: Date.now(), name: "Item" }))
-      }>
+      {/* Cart */}
+      <h2>Cart</h2>
+      <button
+        onClick={() =>
+          dispatch(addToCart({ id: Date.now(), name: "Item" }))
+        }
+      >
         Add Item
       </button>
-      {cart.map(item => (
-        <div key={item.id}>
-          {item.name}
-          <button onClick={() => dispatch(removeFromCart(item.id))}>Remove</button>
-        </div>
+      {cart.map((c) => (
+        <p key={c.id}>{c.name}</p>
       ))}
 
       {/* Notes */}
       <h2>Notes</h2>
-      <button onClick={() =>
-        dispatch(addNote({ id: Date.now(), text: "New Note" }))
-      }>
+      <button
+        onClick={() =>
+          dispatch(addNote({ id: Date.now(), text: "Note" }))
+        }
+      >
         Add Note
       </button>
-      {notes.map(n => (
-        <div key={n.id}>
-          {n.text}
-          <button onClick={() => dispatch(deleteNote(n.id))}>Delete</button>
-        </div>
+      {notes.map((n) => (
+        <p key={n.id}>{n.text}</p>
       ))}
 
-      {/* Like / Dislike */}
+      {/* Likes */}
       <h2>Like / Dislike</h2>
-      <p>Likes: {likes}</p>
+      <p>{likes}</p>
       <button onClick={() => dispatch(like())}>Like</button>
       <button onClick={() => dispatch(dislike())}>Dislike</button>
+
+      {/* Weather */}
+      <h2>Weather</h2>
+      <input onChange={(e) => setCity(e.target.value)} />
+      <button onClick={getWeather}>Get</button>
+      {weather && <p>{weather.main.temp} °C</p>}
     </div>
   );
-};
+}
 
 export default App;

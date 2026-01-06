@@ -1,18 +1,11 @@
-const initialState = { cart: [] };
+const initialState = [];
 
-const cartReducer = (state = initialState, action) => {
+export default function cartReducer(state = initialState, action) {
   switch (action.type) {
     case "ADD_TO_CART":
-      return { cart: [...state.cart, action.payload] };
-
-    case "REMOVE_FROM_CART":
-      return {
-        cart: state.cart.filter(item => item.id !== action.payload)
-      };
-
+      return [...state, action.payload];
     default:
       return state;
   }
-};
+}
 
-export default cartReducer;
